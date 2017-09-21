@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html ng-app="app" ng-controller="RootController" ng-cloak>
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+
+    <title ng-bind="app.page_title || app.title">UniSearch</title>
+    <link rel="shortcut icon" href="image/logo-64.png" type="image/png">
+    <link rel="stylesheet" href="vendor/semantic/semantic.min.css">
+    <link rel="stylesheet" href="css/app.css">
+
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/semantic/semantic.min.js"></script>
+    <script src="vendor/angular/angular.min.js"></script>
+    <script src="vendor/angular/angular-sanitize.min.js"></script>
+
+    <script src="js/app.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/util.js"></script>
+</head>
+<body>
+<div class="ui inverted vertical segment">
+    <div class="ui container">
+        <form ng-submit="search()">
+            <div class="ui fluid huge icon input" ng-class="{'loading': any_loading}">
+                <input placeholder="Search..." ng-model="keyword">
+                <i class="search icon"></i>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="ui vertical segment" ng-show="any_loading">
+    <div class="ui container">
+        <div ng-repeat="(pid, is_loading) in loading" ng-show="is_loading">
+            Sending requests <a ng-href="{{providers[pid].url}}" target="_blank">{{providers[pid].name}}</a>...
+        </div>
+    </div>
+</div>
+
+<div class="ui vertical segment" ng-show="any_error">
+    <div class="ui container">
+        <div ng-repeat="(pid, p_error) in error" class="ui red inverted segment">
+            Error happened when requesting <a ng-href="{{providers[pid].url}}" target="_blank">{{providers[pid].name}}</a>:<br>
+            {{p_error}}
+        </div>
+    </div>
+</div>
+
+<!-- YouDao dict -->
+<div class="ui vertical segment" ng-show="data.youdaodict">
+    <div class="ui container">
+        <h1 class="ui header">{{data.youdaodict.keyword}}</h1>
+        <div ng-show="data.youdaodict.typo_corrections.length > 0" class="ui segment">
+            <h3 class="ui header">Did you mean...</h3>
+            <div class="ui list">
+                <div ng-repeat="w in data.youdaodict.typo_corrections" class="item">
+                    <i class="help icon"></i>
+                    <div class="content">
+                        <a href ng-click="search_key(w.keyword)">{{w.keyword}}</a>
+                        {{w.meaning}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-show="data.youdaodict.pronounces.gb || data.youdaodict.pronounces.us">
+            <div class="ui label" ng-show="data.youdaodict.pronounces.gb"><i class="gb flag"></i> {{data.youdaodict.pronounces.gb}}</div>
+            <div class="ui label" ng-show="data.youdaodict.pronounces.us"><i class="us flag"></i> {{data.youdaodict.pronounces.us}}</div>
+        </div>
+        <div ng-show="data.youdaodict.trans_lines.length > 0" class="ui list">
+            <div class="item" ng-repeat="tr in data.youdaodict.trans_lines">{{tr}}</div>
+        </div>
+        <div class="ui stackable grid">
+            <div class="eight wide column" ng-show="data.youdaodict.pro_trans.length > 0">
+                <div class="ui segment">
+                    <h3 class="ui header">Professional Translations</h3>
+                    <div class="ui styled fluid pro_trans accordion">
+                        <div ng-repeat="pro in data.youdaodict.pro_trans">
+                            <div class="title" ng-class="{'active': $index==0}">
+                                <i class="dropdown icon"></i>
+                                {{pro.field}}
+                            </div>
+                            <div class="content" ng-class="{'active': $index==0}">
+                                <div ng-repeat="i in pro.items" class="ui segment">
+                                    <h5 class="ui header">{{i.title}}</h5>
+                                    <p ng-bind-html="trust_html(i.source)"></p>
+                                    <p ng-bind-html="trust_html(i.trans)"></p>
+                                    <p>
+                                        <small ng-show="i.ref_source">Reference: <a ng-href="{{i.ref_source.url}}" target="_blank" ng-show="i.ref_source.url">{{i.ref_source.title}}</a><span ng-hide="i.ref_source.url">{{i.ref_source.title}}</span></small>
+                                        <small ng-show="i.ref_num">(#Refs: {{i.ref_num}})</small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="eight wide column">
+                <div ng-show="data.youdaodict.web_trans.length > 0" class="ui segment">
+                    <h3 class="ui header">Web Translations</h3>
+                    <div ng-repeat="tr in data.youdaodict.web_trans" class="ui list">
+                        <div class="item">
+                            <div class="content">
+                                <div class="header">{{tr.title}}</div>
+                                <div class="description" ng-bind-html="trust_html(tr.content)"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-show="data.youdaodict.web_phrases.length > 0" class="ui segment">
+                    <h3 class="ui header">Web Phrases</h3>
+                    <p ng-repeat="ph in data.youdaodict.web_phrases">
+                        <strong>{{ph.title}}</strong>
+                        <span>{{ph.content}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="ui vertical inverted segment">-->
+    <!--<div class="ui container">-->
+        <!--<pre>{{data | json:4}}</pre>-->
+    <!--</div>-->
+<!--</div>-->
+<div class="ui inverted vertical center aligned segment">
+    <div class="ui container">
+        <div ng-bind-html="app.copyright"></div>
+    </div>
+</div>
+</body>
+</html>
