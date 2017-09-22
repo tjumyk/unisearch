@@ -2,8 +2,9 @@
 (function() {
   angular.module('app', ['ngSanitize']).controller('RootController', [
     '$scope', '$sce', '$http', '$timeout', '$location', 'engine', 'util', function($scope, $sce, $http, $timeout, $location, engine, util) {
-      var check_any_loading, check_url_params;
+      var $input_keyword, check_any_loading, check_url_params;
       $('.pro_trans.ui.accordion').accordion();
+      $input_keyword = $('#input_keyword');
       $scope.app = {
         name: 'UniSearch',
         title: 'UniSearch',
@@ -71,6 +72,8 @@
         k = $location.search()['k'];
         if (k !== void 0 && k.length > 0) {
           return $scope.search_key(k);
+        } else {
+          return $input_keyword.focus();
         }
       };
       return check_url_params();

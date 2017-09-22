@@ -2,6 +2,7 @@ angular.module 'app', ['ngSanitize']
 
 .controller 'RootController', ['$scope', '$sce', '$http', '$timeout', '$location', 'engine', 'util', ($scope, $sce, $http, $timeout, $location, engine, util)->
   $('.pro_trans.ui.accordion').accordion()
+  $input_keyword = $('#input_keyword')
 
   $scope.app =
     name: 'UniSearch'
@@ -60,6 +61,8 @@ angular.module 'app', ['ngSanitize']
     k = $location.search()['k']
     if k != undefined and k.length > 0
       $scope.search_key(k)
+    else
+      $input_keyword.focus()
 
   check_url_params()
 ]
