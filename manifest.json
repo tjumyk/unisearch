@@ -20,16 +20,23 @@
     ]
   },
   "content_scripts": [{
-    "js": ["js/content_script.js"],
+    "js": ["vendor/jquery/jquery.min.js", "js/inject.js"],
+    "css": ["css/inject.css"],
     "matches": ["http://*/*", "https://*/*"]
   }],
-  "web_accessible_resources": ["js/inject_script.js", "vendor/jquery/jquery.min.js"],
+  "web_accessible_resources": [
+    "css/inject.css",
+    "js/inject.js",
+    "vendor/jquery/jquery.min.js",
+    "index.html"
+  ],
 
   "browser_action": {
-    "default_title": "UniSearch"
+    "default_title": "UniSearch",
+    "default_popup": "index.html"
   },
   "permissions": [
-    "http://dict.youdao.com/",
+    "https://dict.youdao.com/",
     "tabs",
     "contextMenus"
   ]

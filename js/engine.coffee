@@ -6,10 +6,10 @@ angular.module('app').factory 'engine', ['$http', '$q', 'util', ($http, $q, util
     providers:
       youdaodict:
         name: '有道词典'
-        url: 'http://dict.youdao.com/'
-        executor: (keyword)->
+        url: 'https://dict.youdao.com/'
+        executor: (task)->
           new $q (resolve, reject)->
-            $http.get("http://dict.youdao.com/w/eng/#{encodeURIComponent(keyword)}/").then (response)->
+            $http.get("https://dict.youdao.com/w/eng/#{encodeURIComponent(task.keyword)}/").then (response)->
               try
                 doc = response.data
                 $doc = $(doc)
@@ -35,10 +35,7 @@ angular.module('app').factory 'engine', ['$http', '$q', 'util', ($http, $q, util
                 if $phrs_list_tab.length
                   $wordbook = $phrs_list_tab.find('.wordbook-js:first')
                   if $wordbook.length
-                    _keyword = $wordbook.find('.keyword:first').text().trim()
-#                   if _keyword.toLowerCase() != keyword.toLowerCase()
-#                     throw 'Returned keyword does not match with the query keyword!'
-                    keyword = _keyword
+                    keyword = $wordbook.find('.keyword:first').text().trim()
                     $wordbook.find('.pronounce').each ->
                       $pronounce = $(@)
                       text = $pronounce.text().trim()
@@ -156,7 +153,6 @@ angular.module('app').factory 'engine', ['$http', '$q', 'util', ($http, $q, util
                     type_items[t_id] = items
 
                   rank_list.sort (a, b)->b[1] - a[1]
-                  console.log(rank_list)
                   for sort_item in rank_list
                     t_id = sort_item[0]
                     pro_trans.push

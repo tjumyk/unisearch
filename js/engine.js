@@ -10,11 +10,11 @@
         providers: {
           youdaodict: {
             name: '有道词典',
-            url: 'http://dict.youdao.com/',
-            executor: function(keyword) {
+            url: 'https://dict.youdao.com/',
+            executor: function(task) {
               return new $q(function(resolve, reject) {
-                return $http.get("http://dict.youdao.com/w/eng/" + (encodeURIComponent(keyword)) + "/").then(function(response) {
-                  var $doc, $error_wrapper, $phrs_list_tab, $t_pe_trans_all_trans, $t_pe_trans_type_list, $t_web_trans, $web_phrases, $wordbook, _keyword, doc, exception, i, len, pro_trans, pronounces, rank_list, sort_item, t_id, trans_lines, type_items, type_names, typo_corrections, web_phrases, web_trans;
+                return $http.get("https://dict.youdao.com/w/eng/" + (encodeURIComponent(task.keyword)) + "/").then(function(response) {
+                  var $doc, $error_wrapper, $phrs_list_tab, $t_pe_trans_all_trans, $t_pe_trans_type_list, $t_web_trans, $web_phrases, $wordbook, doc, exception, i, keyword, len, pro_trans, pronounces, rank_list, sort_item, t_id, trans_lines, type_items, type_names, typo_corrections, web_phrases, web_trans;
                   try {
                     doc = response.data;
                     $doc = $(doc);
@@ -40,8 +40,7 @@
                     if ($phrs_list_tab.length) {
                       $wordbook = $phrs_list_tab.find('.wordbook-js:first');
                       if ($wordbook.length) {
-                        _keyword = $wordbook.find('.keyword:first').text().trim();
-                        keyword = _keyword;
+                        keyword = $wordbook.find('.keyword:first').text().trim();
                         $wordbook.find('.pronounce').each(function() {
                           var $pronounce, phonetic, pronounce_type, text;
                           $pronounce = $(this);
@@ -189,7 +188,6 @@
                       rank_list.sort(function(a, b) {
                         return b[1] - a[1];
                       });
-                      console.log(rank_list);
                       for (i = 0, len = rank_list.length; i < len; i++) {
                         sort_item = rank_list[i];
                         t_id = sort_item[0];

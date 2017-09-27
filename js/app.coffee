@@ -1,6 +1,17 @@
 angular.module 'app', ['ngSanitize']
 
 .controller 'RootController', ['$scope', '$sce', '$http', '$timeout', '$location', 'engine', 'util', ($scope, $sce, $http, $timeout, $location, engine, util)->
+  log = (title, color, content)->
+    if color == undefined
+      color = 'grey'
+    s1 = "%c %c #{title} "
+    s2 = "background-color: #{color}"
+    s3 = 'background-color:#F7F7F7;color:gray;font-weight:bold;'
+    if content == undefined
+      console.log(s1, s2, s3)
+    else
+      console.log(s1, s2, s3, content)
+
   $('.pro_trans.ui.accordion').accordion()
   $input_keyword = $('#input_keyword')
 
@@ -15,24 +26,31 @@ angular.module 'app', ['ngSanitize']
   $scope.data = {}
   $scope.loading = {}
   $scope.error = {}
+  $scope.search_task = {}
 
   $scope.providers = engine.providers
 
-  $scope.search = ->
+  do_search = (task)->
+    if !task.keyword
+      return
+
+    log('Search', '#2196F3', task)
     $scope.data = {}
     $scope.loading = {}
     $scope.error = {}
     $scope.any_loading = false
     $scope.any_error = false
 
-    keyword = $scope.keyword
-    $scope.set_page_title(keyword)
+    $scope.keyword = task.keyword
+    $scope.set_page_title(task.keyword)
+
+    $location.search('k', task.keyword)
 
     for pid, provider of engine.providers
       do (pid, provider)->
         $scope.loading[pid] = true
         $scope.any_loading = true
-        provider.executor(keyword).then (data)->
+        provider.executor(task).then (data)->
           $scope.loading[pid] = false
           check_any_loading()
           $scope.data[pid] = data
@@ -42,9 +60,20 @@ angular.module 'app', ['ngSanitize']
           $scope.error[pid] = error
           $scope.any_error = true
 
-  $scope.search_key = (keyword)->
-    $scope.keyword = keyword
-    $scope.search()
+  $scope.$watch 'search_task', (task)->
+    do_search(task)
+  , true
+
+  $scope.reset = ->
+    $scope.data = {}
+    $scope.loading = {}
+    $scope.error = {}
+    $scope.search_task = {}
+    $location.search('k', null)
+
+  $scope.search = ->
+    $scope.search_task =
+      keyword: $scope.keyword
 
   $scope.trust_html = (html)->
     return $sce.trustAsHtml(html)
@@ -57,12 +86,33 @@ angular.module 'app', ['ngSanitize']
         break
     $scope.any_loading = any_loading
 
-  check_url_params = ->
-    k = $location.search()['k']
-    if k != undefined and k.length > 0
-      $scope.search_key(k)
+  $scope.$on '$locationChangeSuccess', ->
+    k = $location.search().k
+    if !!k
+      $scope.search_task.keyword = k
     else
-      $input_keyword.focus()
+      $scope.reset()
+      if window.parent == window
+        setTimeout ->
+          $input_keyword.focus()
+        , 100
 
-  check_url_params()
+  window.onmessage = (e)->
+    msg = e.data
+    log('Message↓', '#4CAF50', msg)
+    if msg.action == 'focus-input'
+      $input_keyword.focus()
+      $input_keyword[0].select()
+    else if msg.action == 'context-search'
+      keyword = msg.keyword
+      $timeout ->
+        $scope.search_task.keyword = keyword
+
+  $(window).on 'keydown', (e)->
+    if e.keyCode == 27 or e.keyCode == 192
+      if window.parent != window
+        e.preventDefault()
+        e.stopPropagation()
+        $('input').blur()
+        window.parent.postMessage({'action': 'hide-iframe'}, '*')
 ]

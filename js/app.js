@@ -2,7 +2,21 @@
 (function() {
   angular.module('app', ['ngSanitize']).controller('RootController', [
     '$scope', '$sce', '$http', '$timeout', '$location', 'engine', 'util', function($scope, $sce, $http, $timeout, $location, engine, util) {
-      var $input_keyword, check_any_loading, check_url_params;
+      var $input_keyword, check_any_loading, do_search, log;
+      log = function(title, color, content) {
+        var s1, s2, s3;
+        if (color === void 0) {
+          color = 'grey';
+        }
+        s1 = "%c %c " + title + " ";
+        s2 = "background-color: " + color;
+        s3 = 'background-color:#F7F7F7;color:gray;font-weight:bold;';
+        if (content === void 0) {
+          return console.log(s1, s2, s3);
+        } else {
+          return console.log(s1, s2, s3, content);
+        }
+      };
       $('.pro_trans.ui.accordion').accordion();
       $input_keyword = $('#input_keyword');
       $scope.app = {
@@ -16,16 +30,22 @@
       $scope.data = {};
       $scope.loading = {};
       $scope.error = {};
+      $scope.search_task = {};
       $scope.providers = engine.providers;
-      $scope.search = function() {
-        var keyword, pid, provider, ref, results;
+      do_search = function(task) {
+        var pid, provider, ref, results;
+        if (!task.keyword) {
+          return;
+        }
+        log('Search', '#2196F3', task);
         $scope.data = {};
         $scope.loading = {};
         $scope.error = {};
         $scope.any_loading = false;
         $scope.any_error = false;
-        keyword = $scope.keyword;
-        $scope.set_page_title(keyword);
+        $scope.keyword = task.keyword;
+        $scope.set_page_title(task.keyword);
+        $location.search('k', task.keyword);
         ref = engine.providers;
         results = [];
         for (pid in ref) {
@@ -33,7 +53,7 @@
           results.push((function(pid, provider) {
             $scope.loading[pid] = true;
             $scope.any_loading = true;
-            return provider.executor(keyword).then(function(data) {
+            return provider.executor(task).then(function(data) {
               $scope.loading[pid] = false;
               check_any_loading();
               return $scope.data[pid] = data;
@@ -47,9 +67,20 @@
         }
         return results;
       };
-      $scope.search_key = function(keyword) {
-        $scope.keyword = keyword;
-        return $scope.search();
+      $scope.$watch('search_task', function(task) {
+        return do_search(task);
+      }, true);
+      $scope.reset = function() {
+        $scope.data = {};
+        $scope.loading = {};
+        $scope.error = {};
+        $scope.search_task = {};
+        return $location.search('k', null);
+      };
+      $scope.search = function() {
+        return $scope.search_task = {
+          keyword: $scope.keyword
+        };
       };
       $scope.trust_html = function(html) {
         return $sce.trustAsHtml(html);
@@ -67,16 +98,46 @@
         }
         return $scope.any_loading = any_loading;
       };
-      check_url_params = function() {
+      $scope.$on('$locationChangeSuccess', function() {
         var k;
-        k = $location.search()['k'];
-        if (k !== void 0 && k.length > 0) {
-          return $scope.search_key(k);
+        k = $location.search().k;
+        if (!!k) {
+          return $scope.search_task.keyword = k;
         } else {
-          return $input_keyword.focus();
+          $scope.reset();
+          if (window.parent === window) {
+            return setTimeout(function() {
+              return $input_keyword.focus();
+            }, 100);
+          }
+        }
+      });
+      window.onmessage = function(e) {
+        var keyword, msg;
+        msg = e.data;
+        log('Message↓', '#4CAF50', msg);
+        if (msg.action === 'focus-input') {
+          $input_keyword.focus();
+          return $input_keyword[0].select();
+        } else if (msg.action === 'context-search') {
+          keyword = msg.keyword;
+          return $timeout(function() {
+            return $scope.search_task.keyword = keyword;
+          });
         }
       };
-      return check_url_params();
+      return $(window).on('keydown', function(e) {
+        if (e.keyCode === 27 || e.keyCode === 192) {
+          if (window.parent !== window) {
+            e.preventDefault();
+            e.stopPropagation();
+            $('input').blur();
+            return window.parent.postMessage({
+              'action': 'hide-iframe'
+            }, '*');
+          }
+        }
+      });
     }
   ]);
 
