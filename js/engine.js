@@ -11,6 +11,10 @@
           youdaodict: {
             name: '有道词典',
             url: 'https://dict.youdao.com/',
+            templateUrl: 'ui/youdaodict.html',
+            templateOnLoad: function() {
+              $('.pro_trans.ui.accordion').accordion();
+            },
             executor: function(task) {
               return new $q(function(resolve, reject) {
                 return $http.get("https://dict.youdao.com/w/eng/" + (encodeURIComponent(task.keyword)) + "/").then(function(response) {

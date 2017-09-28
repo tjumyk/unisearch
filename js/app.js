@@ -17,7 +17,6 @@
           return console.log(s1, s2, s3, content);
         }
       };
-      $('.pro_trans.ui.accordion').accordion();
       $input_keyword = $('#input_keyword');
       $scope.app = {
         name: 'UniSearch',
@@ -138,6 +137,18 @@
           }
         }
       });
+    }
+  ]).directive('renderer', [
+    function() {
+      return {
+        restrict: 'A',
+        scope: true,
+        link: function(scope, element, attrs) {
+          return scope.$watch('data.' + scope.pid, function(d) {
+            return scope.d = d;
+          });
+        }
+      };
     }
   ]);
 

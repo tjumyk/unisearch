@@ -1,0 +1,68 @@
+<div class="ui container">
+    <h1 class="ui header">{{d.keyword}}</h1>
+    <div ng-show="d.typo_corrections.length > 0" class="ui segment">
+        <h3 class="ui header">Did you mean...</h3>
+        <div class="ui list">
+            <div ng-repeat="w in d.typo_corrections" class="item">
+                <i class="help icon"></i>
+                <div class="content">
+                    <a href ng-click="search_task.keyword=w.keyword">{{w.keyword}}</a>
+                    {{w.meaning}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-show="d.pronounces.gb || d.pronounces.us">
+        <div class="ui label" ng-show="d.pronounces.gb"><i class="gb flag"></i> {{d.pronounces.gb}}</div>
+        <div class="ui label" ng-show="d.pronounces.us"><i class="us flag"></i> {{d.pronounces.us}}</div>
+    </div>
+    <div ng-show="d.trans_lines.length > 0" class="ui list">
+        <div class="item" ng-repeat="tr in d.trans_lines">{{tr}}</div>
+    </div>
+    <div class="ui stackable grid">
+        <div class="eight wide column" ng-show="d.pro_trans.length > 0">
+            <div class="ui segment">
+                <h3 class="ui header">Professional Translations</h3>
+                <div class="ui styled fluid pro_trans accordion">
+                    <div ng-repeat="pro in d.pro_trans">
+                        <div class="title" ng-class="{'active': $index==0}">
+                            <i class="dropdown icon"></i>
+                            {{pro.field}}
+                        </div>
+                        <div class="content" ng-class="{'active': $index==0}">
+                            <div ng-repeat="i in pro.items" class="ui segment">
+                                <h5 class="ui header">{{i.title}}</h5>
+                                <p ng-bind-html="trust_html(i.source)"></p>
+                                <p ng-bind-html="trust_html(i.trans)"></p>
+                                <p>
+                                    <small ng-show="i.ref_source">Reference: <a ng-href="{{i.ref_source.url}}" target="_blank" ng-show="i.ref_source.url">{{i.ref_source.title}}</a><span ng-hide="i.ref_source.url">{{i.ref_source.title}}</span></small>
+                                    <small ng-show="i.ref_num">(#Refs: {{i.ref_num}})</small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="eight wide column">
+            <div ng-show="d.web_trans.length > 0" class="ui segment">
+                <h3 class="ui header">Web Translations</h3>
+                <div ng-repeat="tr in d.web_trans" class="ui list">
+                    <div class="item">
+                        <div class="content">
+                            <div class="header">{{tr.title}}</div>
+                            <div class="description" ng-bind-html="trust_html(tr.content)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="d.web_phrases.length > 0" class="ui segment">
+                <h3 class="ui header">Web Phrases</h3>
+                <p ng-repeat="ph in d.web_phrases">
+                    <strong>{{ph.title}}</strong>
+                    <span>{{ph.content}}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

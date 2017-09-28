@@ -7,6 +7,10 @@ angular.module('app').factory 'engine', ['$http', '$q', 'util', ($http, $q, util
       youdaodict:
         name: '有道词典'
         url: 'https://dict.youdao.com/'
+        templateUrl: 'ui/youdaodict.html',
+        templateOnLoad: ->
+          $('.pro_trans.ui.accordion').accordion()
+          return
         executor: (task)->
           new $q (resolve, reject)->
             $http.get("https://dict.youdao.com/w/eng/#{encodeURIComponent(task.keyword)}/").then (response)->

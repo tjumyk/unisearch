@@ -12,7 +12,6 @@ angular.module 'app', ['ngSanitize']
     else
       console.log(s1, s2, s3, content)
 
-  $('.pro_trans.ui.accordion').accordion()
   $input_keyword = $('#input_keyword')
 
   $scope.app =
@@ -115,4 +114,12 @@ angular.module 'app', ['ngSanitize']
         e.stopPropagation()
         $('input').blur()
         window.parent.postMessage({'action': 'hide-iframe'}, '*')
+]
+
+.directive 'renderer', [->
+  restrict: 'A'
+  scope: true
+  link: (scope, element, attrs)->
+    scope.$watch 'data.' + scope.pid, (d)->
+      scope.d = d
 ]
