@@ -16,11 +16,12 @@
 
   "background": {
     "scripts": [
+      "js/logger.js",
       "js/background.js"
     ]
   },
   "content_scripts": [{
-    "js": ["vendor/jquery/jquery.min.js", "js/inject.js"],
+    "js": ["vendor/jquery/jquery.min.js", "js/logger.js", "js/inject.js"],
     "css": ["css/inject.css"],
     "matches": ["http://*/*", "https://*/*"]
   }],
@@ -28,6 +29,7 @@
     "css/inject.css",
     "js/inject.js",
     "vendor/jquery/jquery.min.js",
+    "js/logger.js",
     "index.html"
   ],
 

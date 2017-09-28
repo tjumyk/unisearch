@@ -5,6 +5,7 @@ panel_url = root_url + '/index.html'
 $iframe = $("<iframe src='#{panel_url}'>")
 $iframe.appendTo($container)
 $container.appendTo(document.body)
+logger = window.logger
 
 log = (title, color, content)->
   if color == undefined
@@ -32,7 +33,7 @@ window.onmessage = (e)->
   if e.origin != root_url
     return
   msg = e.data
-  log('Message↑', '#4CAF50', msg)
+  logger.log('Message↑', '#4CAF50', msg)
   if msg.action == 'hide-iframe'
     $container.addClass('hidden')
     window.focus()
@@ -50,7 +51,7 @@ $(document).on 'dblclick', (e)->
   request_context_search(keyword)
 
 chrome.extension.onMessage.addListener (msg, sender, sendResponse)->
-  log('ChromeMessage', '#9C27B0', msg)
+  logger.log('ChromeMessage', '#9C27B0', msg)
   if msg.action == 'context-search'
     keyword = msg.keyword
     request_context_search(keyword)

@@ -1,17 +1,6 @@
 angular.module 'app', ['ngSanitize']
 
-.controller 'RootController', ['$scope', '$sce', '$http', '$timeout', '$location', 'engine', 'util', ($scope, $sce, $http, $timeout, $location, engine, util)->
-  log = (title, color, content)->
-    if color == undefined
-      color = 'grey'
-    s1 = "%c %c #{title} "
-    s2 = "background-color: #{color}"
-    s3 = 'background-color:#F7F7F7;color:gray;font-weight:bold;'
-    if content == undefined
-      console.log(s1, s2, s3)
-    else
-      console.log(s1, s2, s3, content)
-
+.controller 'RootController', ['$scope', '$sce', '$http', '$timeout', '$location', 'engine', 'util', 'logger', ($scope, $sce, $http, $timeout, $location, engine, util, logger)->
   $input_keyword = $('#input_keyword')
 
   $scope.app =
@@ -33,7 +22,7 @@ angular.module 'app', ['ngSanitize']
     if !task.keyword
       return
 
-    log('Search', '#2196F3', task)
+    logger.log('Search', '#2196F3', task)
     $scope.data = {}
     $scope.loading = {}
     $scope.error = {}
@@ -98,7 +87,7 @@ angular.module 'app', ['ngSanitize']
 
   window.onmessage = (e)->
     msg = e.data
-    log('Message↓', '#4CAF50', msg)
+    logger.log('Message↓', '#4CAF50', msg)
     if msg.action == 'focus-input'
       $input_keyword.focus()
       $input_keyword[0].select()
