@@ -44,8 +44,8 @@ request_context_search = (keyword)->
     keyword: keyword
 
 $(document).on 'dblclick', (e)->
-  keyword = window.getSelection().toString()
-  if !keyword or keyword.length == 0
+  keyword = window.getSelection().toString().trim()
+  if keyword.length == 0
     return
   request_context_search(keyword)
 

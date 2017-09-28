@@ -5,8 +5,8 @@
     contexts: ["selection"],
     onclick: function(info, tab) {
       var keyword;
-      keyword = info.selectionText;
-      if (!keyword || keyword.length === 0) {
+      keyword = info.selectionText.trim();
+      if (keyword.length === 0) {
         return;
       }
       return chrome.tabs.query({

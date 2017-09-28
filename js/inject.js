@@ -71,8 +71,8 @@
 
   $(document).on('dblclick', function(e) {
     var keyword;
-    keyword = window.getSelection().toString();
-    if (!keyword || keyword.length === 0) {
+    keyword = window.getSelection().toString().trim();
+    if (keyword.length === 0) {
       return;
     }
     return request_context_search(keyword);
