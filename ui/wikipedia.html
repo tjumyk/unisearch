@@ -4,8 +4,10 @@
         <div class="ui stackable grid">
             <div class="twelve wide column" ng-class="{'twelve': d.thumbnail, 'sixteen': !d.thumbnail}">{{d.extract}}</div>
             <div class="four wide column" ng-show="d.thumbnail"><img ng-src="{{d.thumbnail.source}}" class="ui fluid image"></div>
+            <div class="sixteen wide column">
+                <a ng-href="{{d.pageurl}}" class="ui fluid button" target="_blank">Details</a>
+            </div>
         </div>
-        <a ng-href="{{d.pageurl}}" class="ui button" target="_blank">Details</a>
     </div>
     <!--<div class="ui segment">-->
         <!--<div class="ui header">Wikipedia Links</div>-->
