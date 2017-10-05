@@ -1,4 +1,4 @@
-angular.module('app').factory 'engine', ['$http', '$q', 'util', ($http, $q, util)->
+angular.module('app').factory 'engine', ['$http', '$q', '$sce', 'util', ($http, $q, $sce, util)->
   clean_text = (text)->
     return text.replace(/\s+/g, ' ').trim()
 
@@ -6,8 +6,8 @@ angular.module('app').factory 'engine', ['$http', '$q', 'util', ($http, $q, util
     providers:
       youdaodict:
         name: '有道词典'
-        url: 'https://dict.youdao.com/'
-        templateUrl: 'ui/youdaodict.html',
+        url: 'https://dict.youdao.com'
+        templateUrl: 'ui/youdaodict.html'
         templateOnLoad: ->
           $('.pro_trans.ui.accordion').accordion()
           return
