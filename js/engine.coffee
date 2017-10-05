@@ -202,5 +202,84 @@ angular.module('app').factory 'engine', ['$http', '$q', '$sce', 'util', ($http, 
             , (response)->
               reject(util.formatResponseError(response))
 
+      dictionary_com:
+        name: 'Dictionary.com'
+        url: 'http://www.dictionary.com'
+        templateUrl: 'ui/dictionary_com.html'
+        templateOnLoad: ->
+          $('.pronounce.button').on 'click', ->
+            $audio = $(@).siblings('audio')
+            if $audio.length > 0
+              $audio[0].play()
+          return
+        executor: (task)->
+          new $q (resolve, reject)->
+            kw = task.keyword
+            api = 'http://www.dictionary.com/browse/' + encodeURIComponent(kw)
+            $http.get(api).then (response)->
+              $doc = $(response.data)
+              $luna_box = $doc.find('#source-luna .source-box .luna-box')
+              if $luna_box.length > 0
+                $header = $luna_box.find('header.main-header')
+                if $header.length > 0
+                  keyword = $header.find('h1.head-entry').text().trim()
+                  pronounce_audios = []
+                  $header.find('audio source').each ->
+                    $source = $(@)
+                    pronounce_audios.push
+                      src: $sce.trustAsResourceUrl($source.attr('src'))
+                      type: $source.attr('type')
+                  pronounce = $header.find('.pronounce .pron.ipapron').text().trim()
+                $source_data = $luna_box.find('.source-data')
+                if $source_data.length > 0
+                  def_list = []
+                  $source_data.find('.def-list .def-pbk').each ->
+                    $def = $(@)
+                    title = $def.find('.luna-data-header').text().trim()
+                    defs = []
+                    $def.find('.def-set').each ->
+                      $def_set = $(@)
+                      $def_content = $def_set.find('.def-content')
+                      $def_sub_list = $def_content.find('.def-sub-list')
+                      if $def_sub_list.length > 0
+                        sub_defs = []
+                        $def_sub_list.find('li').each ->
+                          $sub_def = $(@)
+                          $def_example = $sub_def.find('.def-inline-example')
+                          def_example = $def_example.text().trim()
+                          $def_example.remove()
+                          def_text = $sub_def.text().trim()
+                          sub_defs.push
+                            def: def_text
+                            example: def_example
+                        $def_sub_list.remove()
+                        def_text = $def_set.find('.def-content').text().trim()
+                        defs.push
+                          def: def_text
+                          sub_defs: sub_defs
+                      else
+                        $def_example = $def_content.find('.def-inline-example')
+                        def_example = $def_example.text().trim()
+                        $def_example.remove()
+                        def_text = $def_set.find('.def-content').text().trim()
+                        defs.push
+                          def: def_text
+                          example: def_example
+                    def_list.push {
+                      title
+                      defs
+                    }
+              resolve {
+                keyword
+                pronounce_audios
+                pronounce
+                def_list
+              }
+            , (response)->
+              if response.status == 404
+                resolve {}
+              else
+                reject(util.formatResponseError(response))
+
   return service
 ]

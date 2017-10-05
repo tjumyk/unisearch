@@ -253,6 +253,110 @@
                 });
               });
             }
+          },
+          dictionary_com: {
+            name: 'Dictionary.com',
+            url: 'http://www.dictionary.com',
+            templateUrl: 'ui/dictionary_com.html',
+            templateOnLoad: function() {
+              $('.pronounce.button').on('click', function() {
+                var $audio;
+                $audio = $(this).siblings('audio');
+                if ($audio.length > 0) {
+                  return $audio[0].play();
+                }
+              });
+            },
+            executor: function(task) {
+              return new $q(function(resolve, reject) {
+                var api, kw;
+                kw = task.keyword;
+                api = 'http://www.dictionary.com/browse/' + encodeURIComponent(kw);
+                return $http.get(api).then(function(response) {
+                  var $doc, $header, $luna_box, $source_data, def_list, keyword, pronounce, pronounce_audios;
+                  $doc = $(response.data);
+                  $luna_box = $doc.find('#source-luna .source-box .luna-box');
+                  if ($luna_box.length > 0) {
+                    $header = $luna_box.find('header.main-header');
+                    if ($header.length > 0) {
+                      keyword = $header.find('h1.head-entry').text().trim();
+                      pronounce_audios = [];
+                      $header.find('audio source').each(function() {
+                        var $source;
+                        $source = $(this);
+                        return pronounce_audios.push({
+                          src: $sce.trustAsResourceUrl($source.attr('src')),
+                          type: $source.attr('type')
+                        });
+                      });
+                      pronounce = $header.find('.pronounce .pron.ipapron').text().trim();
+                    }
+                    $source_data = $luna_box.find('.source-data');
+                    if ($source_data.length > 0) {
+                      def_list = [];
+                      $source_data.find('.def-list .def-pbk').each(function() {
+                        var $def, defs, title;
+                        $def = $(this);
+                        title = $def.find('.luna-data-header').text().trim();
+                        defs = [];
+                        $def.find('.def-set').each(function() {
+                          var $def_content, $def_example, $def_set, $def_sub_list, def_example, def_text, sub_defs;
+                          $def_set = $(this);
+                          $def_content = $def_set.find('.def-content');
+                          $def_sub_list = $def_content.find('.def-sub-list');
+                          if ($def_sub_list.length > 0) {
+                            sub_defs = [];
+                            $def_sub_list.find('li').each(function() {
+                              var $def_example, $sub_def, def_example, def_text;
+                              $sub_def = $(this);
+                              $def_example = $sub_def.find('.def-inline-example');
+                              def_example = $def_example.text().trim();
+                              $def_example.remove();
+                              def_text = $sub_def.text().trim();
+                              return sub_defs.push({
+                                def: def_text,
+                                example: def_example
+                              });
+                            });
+                            $def_sub_list.remove();
+                            def_text = $def_set.find('.def-content').text().trim();
+                            return defs.push({
+                              def: def_text,
+                              sub_defs: sub_defs
+                            });
+                          } else {
+                            $def_example = $def_content.find('.def-inline-example');
+                            def_example = $def_example.text().trim();
+                            $def_example.remove();
+                            def_text = $def_set.find('.def-content').text().trim();
+                            return defs.push({
+                              def: def_text,
+                              example: def_example
+                            });
+                          }
+                        });
+                        return def_list.push({
+                          title: title,
+                          defs: defs
+                        });
+                      });
+                    }
+                  }
+                  return resolve({
+                    keyword: keyword,
+                    pronounce_audios: pronounce_audios,
+                    pronounce: pronounce,
+                    def_list: def_list
+                  });
+                }, function(response) {
+                  if (response.status === 404) {
+                    return resolve({});
+                  } else {
+                    return reject(util.formatResponseError(response));
+                  }
+                });
+              });
+            }
           }
         }
       };

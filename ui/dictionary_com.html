@@ -1,0 +1,33 @@
+<div class="ui container" ng-show="d.keyword">
+    <h1 class="ui header">{{d.keyword}}</h1>
+    <div class="ui pronounce button" ng-show="d.pronounce"><i class="volume up icon"></i> {{d.pronounce}}</div>
+    <audio>
+        <source ng-src="{{audio.src}}" ng-attr-type="{{audio.type}}" ng-repeat="audio in d.pronounce_audios">
+    </audio>
+    <div class="ui list">
+        <div class="item" ng-repeat="def_collection in d.def_list">
+            <i class="cube icon"></i>
+            <div class="content">
+                <div class="header">{{def_collection.title}}</div>
+                <div class="list">
+                    <div class="item" ng-repeat="def_item in def_collection.defs">
+                        <i class="caret right icon"></i>
+                        <div class="content">
+                            <div class="header">{{def_item.def}}</div>
+                            <div class="description" ng-show="def_item.example.length>0">{{def_item.example}}</div>
+                            <div class="list" ng-show="def_item.sub_defs.length>0">
+                                <div class="item" ng-repeat="sub_def_item in def_item.sub_defs">
+                                    <i class="angle right icon"></i>
+                                    <div class="content">
+                                        <div class="header">{{sub_def_item.def}}</div>
+                                        <div class="description" ng-show="sub_def_item.example.length>0">{{sub_def_item.example}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
