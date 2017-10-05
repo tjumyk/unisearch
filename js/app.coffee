@@ -7,6 +7,7 @@ angular.module 'app', ['ngSanitize']
     name: 'UniSearch'
     title: 'UniSearch'
     copyright: $sce.trustAsHtml('Created by <a href="https://github.com/tjumyk" target="_blank">Kelvin Miao</a>')
+    debug_mode: false
 
   $scope.set_page_title = (text)->
     $scope.app.page_title = "#{text} · #{$scope.app.title}"

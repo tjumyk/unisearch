@@ -7,7 +7,8 @@
       $scope.app = {
         name: 'UniSearch',
         title: 'UniSearch',
-        copyright: $sce.trustAsHtml('Created by <a href="https://github.com/tjumyk" target="_blank">Kelvin Miao</a>')
+        copyright: $sce.trustAsHtml('Created by <a href="https://github.com/tjumyk" target="_blank">Kelvin Miao</a>'),
+        debug_mode: false
       };
       $scope.set_page_title = function(text) {
         return $scope.app.page_title = text + " · " + $scope.app.title;

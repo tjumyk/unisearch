@@ -52,14 +52,22 @@
 
 <div ng-repeat="(pid, p) in providers" ng-include="p.templateUrl" data-onload="p.templateOnLoad()" renderer class="ui vertical segment" ng-show="data[pid]"></div>
 
-<!--<div class="ui vertical inverted segment">-->
-    <!--<div class="ui container">-->
-        <!--<pre>{{data | json:4}}</pre>-->
-    <!--</div>-->
-<!--</div>-->
+<div class="ui vertical inverted segment" ng-show="app.debug_mode">
+    <div class="ui container">
+        <pre>{{data | json:4}}</pre>
+    </div>
+</div>
 <div class="ui inverted vertical center aligned segment">
     <div class="ui container">
-        <div ng-bind-html="app.copyright"></div>
+        <p ng-bind-html="app.copyright"></p>
+        <div class="ui mini inverted form">
+            <div class="field">
+                <div class="ui toggle checkbox">
+                    <input type="checkbox" ng-model="app.debug_mode" id="checkbox_debug_mode">
+                    <label for="checkbox_debug_mode">Debug</label>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </body>
