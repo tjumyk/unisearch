@@ -71,6 +71,16 @@
       $scope.trust_html = function(html) {
         return $sce.trustAsHtml(html);
       };
+      $scope.play_audio = function(audios) {
+        var sound;
+        if (!audios || audios.length === 0) {
+          return;
+        }
+        sound = new Howl({
+          src: audios
+        });
+        return sound.play();
+      };
       check_any_loading = function() {
         var any_loading, k, ref, v;
         any_loading = false;

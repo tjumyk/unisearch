@@ -1,4 +1,4 @@
-angular.module('app').factory 'engine', ['$http', '$q', '$sce', 'util', ($http, $q, $sce, util)->
+angular.module('app').factory 'engine', ['$http', '$q', 'util', ($http, $q, util)->
   clean_text = (text)->
     return text.replace(/\s+/g, ' ').trim()
 
@@ -226,9 +226,7 @@ angular.module('app').factory 'engine', ['$http', '$q', '$sce', 'util', ($http, 
                   pronounce_audios = []
                   $header.find('audio source').each ->
                     $source = $(@)
-                    pronounce_audios.push
-                      src: $sce.trustAsResourceUrl($source.attr('src'))
-                      type: $source.attr('type')
+                    pronounce_audios.push($source.attr('src'))
                   pronounce = $header.find('.pronounce .pron.ipapron').text().trim()
                 $source_data = $luna_box.find('.source-data')
                 if $source_data.length > 0

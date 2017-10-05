@@ -67,6 +67,12 @@ angular.module 'app', ['ngSanitize']
   $scope.trust_html = (html)->
     return $sce.trustAsHtml(html)
 
+  $scope.play_audio = (audios)->
+    return if !audios or audios.length == 0
+    sound = new Howl
+      src: audios
+    sound.play()
+
   check_any_loading = ->
     any_loading = false
     for k,v of $scope.loading
