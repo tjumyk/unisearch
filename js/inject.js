@@ -60,6 +60,11 @@
     if (msg.action === 'hide-iframe') {
       $container.addClass('hidden');
       return window.focus();
+    } else if (msg.action === 'request-parent-info') {
+      return send_message_to_panel({
+        action: 'response-parent-info',
+        require_https: window.location.protocol === 'https:'
+      });
     }
   };
 

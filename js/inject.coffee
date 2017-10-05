@@ -37,6 +37,10 @@ window.onmessage = (e)->
   if msg.action == 'hide-iframe'
     $container.addClass('hidden')
     window.focus()
+  else if msg.action == 'request-parent-info'
+    send_message_to_panel
+      action: 'response-parent-info'
+      require_https: window.location.protocol == 'https:'
 
 request_context_search = (keyword)->
   $container.removeClass('hidden')

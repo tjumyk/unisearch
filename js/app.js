@@ -18,6 +18,7 @@
       $scope.error = {};
       $scope.search_task = {};
       $scope.providers = engine.providers;
+      $scope.require_https = false;
       do_search = function(task) {
         var pid, provider, ref, results;
         if (!task.keyword) {
@@ -36,6 +37,9 @@
         results = [];
         for (pid in ref) {
           provider = ref[pid];
+          if ($scope.require_https && !provider.httpsOnly) {
+            continue;
+          }
           results.push((function(pid, provider) {
             $scope.loading[pid] = true;
             $scope.any_loading = true;
@@ -120,9 +124,11 @@
           return $timeout(function() {
             return $scope.search_task.keyword = keyword;
           });
+        } else if (msg.action === 'response-parent-info') {
+          return $scope.require_https = msg.require_https;
         }
       };
-      return $(window).on('keydown', function(e) {
+      $(window).on('keydown', function(e) {
         if (e.keyCode === 27 || e.keyCode === 192) {
           if (window.parent !== window) {
             e.preventDefault();
@@ -134,6 +140,9 @@
           }
         }
       });
+      return window.parent.postMessage({
+        'action': 'request-parent-info'
+      }, '*');
     }
   ]).directive('renderer', [
     function() {

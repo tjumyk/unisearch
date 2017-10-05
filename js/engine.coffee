@@ -7,6 +7,7 @@ angular.module('app').factory 'engine', ['$http', '$q', 'util', ($http, $q, util
       youdaodict:
         name: '有道词典'
         url: 'https://dict.youdao.com'
+        httpsOnly: true
         templateUrl: 'ui/youdaodict.html'
         templateOnLoad: ->
           $('.pro_trans.ui.accordion').accordion()
@@ -180,6 +181,7 @@ angular.module('app').factory 'engine', ['$http', '$q', 'util', ($http, $q, util
       wikipedia:
         name: 'Wikipedia'
         url: 'https://en.wikipedia.org'
+        httpsOnly: true
         templateUrl: 'ui/wikipedia.html'
         templateOnLoad: -> return
         executor: (task)->
@@ -205,6 +207,7 @@ angular.module('app').factory 'engine', ['$http', '$q', 'util', ($http, $q, util
       dictionary_com:
         name: 'Dictionary.com'
         url: 'http://www.dictionary.com'
+        httpsOnly: false
         templateUrl: 'ui/dictionary_com.html'
         templateOnLoad: ->
           $('.pronounce.button').on 'click', ->

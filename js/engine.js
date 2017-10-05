@@ -11,6 +11,7 @@
           youdaodict: {
             name: '有道词典',
             url: 'https://dict.youdao.com',
+            httpsOnly: true,
             templateUrl: 'ui/youdaodict.html',
             templateOnLoad: function() {
               $('.pro_trans.ui.accordion').accordion();
@@ -223,6 +224,7 @@
           wikipedia: {
             name: 'Wikipedia',
             url: 'https://en.wikipedia.org',
+            httpsOnly: true,
             templateUrl: 'ui/wikipedia.html',
             templateOnLoad: function() {},
             executor: function(task) {
@@ -257,6 +259,7 @@
           dictionary_com: {
             name: 'Dictionary.com',
             url: 'http://www.dictionary.com',
+            httpsOnly: false,
             templateUrl: 'ui/dictionary_com.html',
             templateOnLoad: function() {
               $('.pronounce.button').on('click', function() {

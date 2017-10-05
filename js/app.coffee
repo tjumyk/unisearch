@@ -18,6 +18,7 @@ angular.module 'app', ['ngSanitize']
   $scope.search_task = {}
 
   $scope.providers = engine.providers
+  $scope.require_https = false
 
   do_search = (task)->
     if !task.keyword
@@ -36,6 +37,8 @@ angular.module 'app', ['ngSanitize']
     $location.search('k', task.keyword)
 
     for pid, provider of engine.providers
+      if $scope.require_https and not provider.httpsOnly
+        continue
       do (pid, provider)->
         $scope.loading[pid] = true
         $scope.any_loading = true
@@ -102,6 +105,8 @@ angular.module 'app', ['ngSanitize']
       keyword = msg.keyword
       $timeout ->
         $scope.search_task.keyword = keyword
+    else if msg.action == 'response-parent-info'
+      $scope.require_https = msg.require_https
 
   $(window).on 'keydown', (e)->
     if e.keyCode == 27 or e.keyCode == 192
@@ -110,6 +115,8 @@ angular.module 'app', ['ngSanitize']
         e.stopPropagation()
         $('input').blur()
         window.parent.postMessage({'action': 'hide-iframe'}, '*')
+
+  window.parent.postMessage({'action': 'request-parent-info'}, '*')
 ]
 
 .directive 'renderer', [->
