@@ -1,0 +1,16 @@
+<div class="ui container" ng-show="d.pageid">
+    <div class="ui segment">
+        <div class="ui header">Wikipedia - {{d.title}}</div>
+        <div class="ui stackable grid">
+            <div class="twelve wide column" ng-class="{'twelve': d.thumbnail, 'sixteen': !d.thumbnail}">{{d.extract}}</div>
+            <div class="four wide column" ng-show="d.thumbnail"><img ng-src="{{d.thumbnail.source}}" class="ui fluid image"></div>
+        </div>
+        <a ng-href="{{d.pageurl}}" class="ui button" target="_blank">Details</a>
+    </div>
+    <!--<div class="ui segment">-->
+        <!--<div class="ui header">Wikipedia Links</div>-->
+        <!--<div class="ui list">-->
+            <!--<a ng-repeat="l in d.links" class="item" ng-href="{{l.href}}" target="_blank">{{l.title}}</a>-->
+        <!--</div>-->
+    <!--</div>-->
+</div>

@@ -177,5 +177,30 @@ angular.module('app').factory 'engine', ['$http', '$q', '$sce', 'util', ($http, 
             , (response)->
               reject(util.formatResponseError(response))
 
+      wikipedia:
+        name: 'Wikipedia'
+        url: 'https://en.wikipedia.org'
+        templateUrl: 'ui/wikipedia.html'
+        templateOnLoad: -> return
+        executor: (task)->
+          new $q (resolve, reject)->
+            kw = task.keyword
+            api_host = "https://en.wikipedia.org"
+            api = api_host + "/w/api.php?action=query&format=json&prop=extracts%7Cpageimages%7Crevisions%7Cinfo%7Ccategories%7Clinks&pllimit=50&redirects=true&exintro=false&exsentences=2&explaintext=true&piprop=thumbnail&pithumbsize=320&rvprop=timestamp&inprop=watched&indexpageids=true&titles=" + encodeURIComponent(kw)
+            $http.get(api).then (response)->
+              raw = response.data
+              query = raw.query
+              pageid = query.pageids[0]
+              if pageid == '-1'
+                resolve {}
+              else
+                page = query.pages[pageid]
+                page.pageurl = api_host + '/wiki/' + encodeURIComponent(page.title.replace(/[ ]/g, '_'))
+                for l in page.links
+                  l.href = api_host + '/wiki/' + encodeURIComponent(l.title.replace(/[ ]/g, '_'))
+                resolve(page)
+            , (response)->
+              reject(util.formatResponseError(response))
+
   return service
 ]

@@ -219,6 +219,40 @@
                 });
               });
             }
+          },
+          wikipedia: {
+            name: 'Wikipedia',
+            url: 'https://en.wikipedia.org',
+            templateUrl: 'ui/wikipedia.html',
+            templateOnLoad: function() {},
+            executor: function(task) {
+              return new $q(function(resolve, reject) {
+                var api, api_host, kw;
+                kw = task.keyword;
+                api_host = "https://en.wikipedia.org";
+                api = api_host + "/w/api.php?action=query&format=json&prop=extracts%7Cpageimages%7Crevisions%7Cinfo%7Ccategories%7Clinks&pllimit=50&redirects=true&exintro=false&exsentences=2&explaintext=true&piprop=thumbnail&pithumbsize=320&rvprop=timestamp&inprop=watched&indexpageids=true&titles=" + encodeURIComponent(kw);
+                return $http.get(api).then(function(response) {
+                  var i, l, len, page, pageid, query, raw, ref;
+                  raw = response.data;
+                  query = raw.query;
+                  pageid = query.pageids[0];
+                  if (pageid === '-1') {
+                    return resolve({});
+                  } else {
+                    page = query.pages[pageid];
+                    page.pageurl = api_host + '/wiki/' + encodeURIComponent(page.title.replace(/[ ]/g, '_'));
+                    ref = page.links;
+                    for (i = 0, len = ref.length; i < len; i++) {
+                      l = ref[i];
+                      l.href = api_host + '/wiki/' + encodeURIComponent(l.title.replace(/[ ]/g, '_'));
+                    }
+                    return resolve(page);
+                  }
+                }, function(response) {
+                  return reject(util.formatResponseError(response));
+                });
+              });
+            }
           }
         }
       };
