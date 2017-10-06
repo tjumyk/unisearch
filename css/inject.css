@@ -17,4 +17,38 @@
   height: 100%;
   border: 0;
 }
+.unisearch-panel .panel-toolbar {
+  position: absolute;
+  right: 0;
+  top: -20px;
+  height: 20px;
+  background: lightgray;
+}
+.unisearch-panel .panel-toolbar > .header {
+  content: '';
+  width: 28.28px;
+  height: 28.28px;
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+  -webkit-transform-origin: 0 0;
+          transform-origin: 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: lightgray;
+  z-index: -1;
+}
+.unisearch-panel .panel-toolbar .close-btn {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+.unisearch-panel .panel-toolbar .close-btn:before {
+  content: '✕';
+  color: #fff;
+  font-weight: 300;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+}
 /*# sourceMappingURL=inject.css.map */

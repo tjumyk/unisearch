@@ -17,4 +17,36 @@
     height: 100%;
     border: 0;
   }
+  .panel-toolbar{
+    position: absolute;
+    right: 0;
+    top: -20px;
+    height: 20px;
+    background: lightgray;
+    &>.header{
+      content: '';
+      width: 20 * 1.414px;
+      height: 20 * 1.414px;
+      transform: rotate(45deg);
+      transform-origin: 0 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: lightgray;
+      z-index: -1;
+    }
+    .close-btn{
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      cursor: pointer;
+      &:before {
+        content: '✕';
+        color: #fff;
+        font-weight: 300;
+        font-family: Arial, sans-serif;
+        font-size: 18px;
+      }
+    }
+  }
 }

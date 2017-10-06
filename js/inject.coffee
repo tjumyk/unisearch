@@ -1,4 +1,6 @@
 $container = $('<div class="unisearch-panel hidden"></div>')
+$toolbar = $("<div class='panel-toolbar'><div class='header'></div><div class='close-btn'></div></div>")
+$toolbar.appendTo($container)
 root_url = chrome.extension.getURL('/')
 root_url = root_url.substring(0, root_url.length - 1)
 panel_url = root_url + '/index.html'
@@ -26,8 +28,15 @@ $(document).on 'keydown', (e)->
     e.preventDefault()
     e.stopPropagation()
     $container.toggleClass('hidden')
-    if not $container.hasClass('hidden')
+    if $container.hasClass('hidden')
+      window.focus()
+    else
       send_message_to_panel({'action': 'focus-input'})
+
+
+$toolbar.find('.close-btn').on 'click', ->
+  $container.addClass('hidden')
+  window.focus()
 
 window.onmessage = (e)->
   if e.origin != root_url
