@@ -1,16 +1,19 @@
 angular.module 'app', ['ngSanitize']
 
-.controller 'RootController', ['$scope', '$sce', '$http', '$timeout', '$location', 'engine', 'util', 'logger', ($scope, $sce, $http, $timeout, $location, engine, util, logger)->
+.controller 'RootController', ['$scope', '$sce', '$http', '$timeout', '$location', 'engine', 'cache', 'util', 'logger', ($scope, $sce, $http, $timeout, $location, engine, cache, util, logger)->
   $input_keyword = $('#input_keyword')
 
   $scope.app =
     name: 'UniSearch'
     title: 'UniSearch'
     copyright: $sce.trustAsHtml('Created by <a href="https://github.com/tjumyk" target="_blank">Kelvin Miao</a>')
-    debug_mode: false
+    debug_mode: !!cache.get('app.debug_mode')
 
   $scope.set_page_title = (text)->
     $scope.app.page_title = "#{text} · #{$scope.app.title}"
+
+  $scope.$watch 'app.debug_mode', (val)->
+    cache.set('app.debug_mode', val)
 
   $scope.data = {}
   $scope.loading = {}
@@ -37,15 +40,29 @@ angular.module 'app', ['ngSanitize']
     $location.search('k', task.keyword)
 
     for pid, provider of engine.providers
-      if $scope.require_https and not provider.httpsOnly
-        continue
       do (pid, provider)->
+        # request cache
+        if !$scope.app.debug_mode
+          cache_id = "data.#{task.keyword}.#{pid}"
+          cache_data = cache.get(cache_id)
+          if !!cache_data
+            $scope.data[pid] = cache_data
+            return
+
+        # check same-origin policy
+        # TODO use background page to load data to avoid this issue
+        if $scope.require_https and not provider.httpsOnly
+          return
+
+        # request provider
         $scope.loading[pid] = true
         $scope.any_loading = true
         provider.executor(task).then (data)->
           $scope.loading[pid] = false
           check_any_loading()
           $scope.data[pid] = data
+          if cache_id
+            cache.set(cache_id, data)
         , (error)->
           $scope.loading[pid] = false
           check_any_loading()
